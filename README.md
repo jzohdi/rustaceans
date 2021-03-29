@@ -108,3 +108,42 @@ let condition = true;
 let number = if condition { 5 } else { 6 };
 // number will get the value 5
 ```
+
+## Chapter 4
+
+Ownership
+
+### Move
+
+```rust
+let s1 = String:from("Hello world"); // s1 live on stack but points to memory on the heap that contains the string
+let s2 = s1; // this is valid but the heap block is now owned by s2, accessing s1 is an error.
+
+println!("{}", s1); // wont compile
+```
+### Copy
+```rust
+fn main() {
+    let s = String::from("hello");  // s comes into scope
+
+    takes_ownership(s);             // s's value moves into the function...
+                                    // ... and so is no longer valid here
+
+    let x = 5;                      // x comes into scope
+
+    makes_copy(x);                  // x would move into the function,
+                                    // but i32 is Copy, so it’s okay to still
+                                    // use x afterward
+
+} // Here, x goes out of scope, then s. But because s's value was moved, nothing
+  // special happens.
+
+fn takes_ownership(some_string: String) { // some_string comes into scope
+    println!("{}", some_string);
+} // Here, some_string goes out of scope and `drop` is called. The backing
+  // memory is freed.
+
+fn makes_copy(some_integer: i32) { // some_integer comes into scope
+    println!("{}", some_integer);
+} // Here, some_integer goes out of scope. Nothing special happens. 
+```
