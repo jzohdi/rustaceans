@@ -265,4 +265,49 @@ fn main() -> Result<(), Box<dyn, Error>> {
 }
 ```
 
+## Chapter 10 
+
+Generics
+
+We can create generic functions, enums, traits and add lifetimes.
+
+We can also implement functions on a generic that can only be called by certain types.
+For example a `Point<T>` enum, and
+```rust
+impl Point<i32>
+    fn dist(&self) -> i32 {
+          self.x
+     }
+}
+```
+
+Rust implements generics in such a way that your code doesn’t run any slower using generic types
+than it would with concrete types. When Rust compiles code, it performs monomorphization. 
+During that process, the compiler reads the values that have been used in the generic and
+identifies the types. 
+For example: `Some(5) and Some(5.0) will be expanded into Option_i32 and Options_f32`.
+
+### Traits
+Similar to interfaces in other languages, with some differences.
+
+```rust
+pub trait Printable {
+    fn to_str(&self) -> String;
+}
+```
+
+```rust
+pub struct NewsArticle {
+    pub headline: String,
+    pub location: String,
+    pub author: String,
+    pub content: String,
+}
+
+impl Printable for NewsArticle {
+    fn to_str(&self) -> String {
+        format!("{}, by {} ({})", self.headline, self.author, self.location)
+    }
+}
+```
 
