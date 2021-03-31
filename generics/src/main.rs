@@ -54,11 +54,41 @@ fn traits() {
         retweet: false,
     };
     println!("tweet: {}", tweet.summarize());
+
+    let link = Link {
+        headline: String::from("Florida man escapes jail"),
+        url: String::from("fox.com"),
+    };
+
+    notify(&link);
+
+    notify(&get_summarizable());
 }
 
+// generic version
+fn flash<T: Summary>(item: &T) {
+    println!("Breaking news! {}", item.summarize());
+}
 
+// demonstraiting traits as parameters:
+fn notify(item: &impl Summary) {
+    println!("Breaking news! {}", item.summarize());
+}
+
+fn get_summarizable() -> impl Summary {
+    NewsArticle {
+        headline: String::from("Covid 19"),
+        location: String::from("Wuhan, China"),
+        author: String::from("Jack Ma"),
+        content: String::from("Corona virus panic not needed, have everything under control"),
+    }
+}
+
+// default implementation
 trait Summary {
-    fn summarize(&self) -> String;
+    fn summarize(&self) -> String {
+        String::from("(Read more...)")
+    }
 }
 
 struct NewsArticle {
@@ -85,4 +115,12 @@ impl Summary for Tweet {
     fn summarize(&self) -> String {
         format!("{}: {}", self.username, self.content)
     }
+} 
+
+struct Link {
+    headline: String,
+    url: String,
 }
+impl Summary for Link {}
+
+

@@ -310,4 +310,177 @@ impl Printable for NewsArticle {
     }
 }
 ```
+Default Trait and traits as paramets
+
+```rust 
+pub trait Printable {
+    fn to_str(&self) -> String {
+         format!("{} by {}", self.headline, self.author)
+    }
+}
+
+impl Printable for NewsArticle {}
+
+fn notify(item: &impl Printable) {
+    println!("Breaking news: {}", item.to_str());
+}
+
+```
+
+Generic and multiple trait bounds
+
+```rust
+fn notify<T: Printable>(item: &T) {
+    println!("Breaking news: {}", item.to_str());
+}
+
+fn notify<T: Printable + Display>(item: &T) 
+
+fn notify(item: &(impl Printable + Display))
+```
+
+Traits with the where clause
+
+```rust
+fn some_function<T: Display + Clone, U: Clone + Debug>(t: &T, u: &U) -> String {
+...
+}
+
+vs
+
+fn some_function<T, U>(t: &T, u: &U) -> String
+    where T: Display + Clone,
+          U: Clone + Debug
+{
+...
+}
+```
+
+Returning Types that implement traits
+
+```rust
+fn returns_printable() -> impl Printable {
+...
+}
+```
+
+Implement a function for a struct that implements other traits. The below code
+implements the function display largest for any Pair that implements the traits
+Dsiplay and PartialOrd
+
+```rust
+impl<T: Display + PartialOrd> Pair<T> {
+     fn display_largest(&self) {
+          if self.x > self.y {
+               println!("x = {}", self.x);
+          } else {
+               println!("y = {}", self.y);
+          }
+      }
+}
+```
+
+Blanket Implementations.
+The below code implements ToString trait on any type that implements `Display` trait.
+
+```rust
+impl <T: Display> ToString for T {
+   ...
+}
+```
+
+#### Lifetime Annotation
+Lifetime annotations don't change how long any of the references live, they are there to describe the relationships of the
+lifetimes of multiple references without affecting the lifetimes.
+
+```rust
+&i32 // a reference
+&'a i32 // a reference with an explicit lifetime
+&'a i32 // a mutable reference with an explicit lifetime
+
+```
+One lifetime annotation by itself doesn't have much meaning because they are meant to describe relationships.
+
+Why use?
+
+```rust
+// return a reference to the longer of the two &str params
+fn longest(x: &str, y: &str) -> &str {
+    if x.len() > y.len() {
+        x
+    } else { 
+        y
+    }
+}
+```
+The get a compile error because the compiler can't tell if x will be longer or y will be longer and therefore doesn't know
+what the lifetime of the returned reference will be. This is needed in order to determine if the reference we return will
+always be valid.
+
+```rust
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() {
+       ...
+}
+```
+Now we are telling the compiler that the parameters passed in must have the same lifetime. This prevents code such as:
+
+```rust
+fn main() {
+    let string1 = String::from("long string is long");
+    let result;
+    {
+        let string2 = String::from("xyz");
+        result = longest(string1.as_str(), string2.as_str());
+    }
+    println!("The longer string is: {}", result);
+}
+```
+(Because we cannot use a reference to a string that will be out of scope. string2 gets dropped after the inner bracket is closed.)
+
+Annotating struct definitions:
+```rust
+struct Excerpt<'a> {
+    part: &'a str,
+}
+```
+This means that the instance of `Excerpt` cannot outlive the reference it holds in its `part` field.
+
+##### Input Lifetimes
+lifetimes of functions or method parameters.
+
+Rule: each parameter that is a reference gets its own lifetime parameter. 
+(`fn foo<'a>(x: &'a i32)`,  `fn food<'a, 'b>(x: &'a i32, y: &'b i32)`)
+
+##### Output lifetimes
+lifetimes on return values
+
+Rules: 
+1. if there is exactly one input lifetime parameter, that lifetime is assigned to all output lifetime parameters.
+(`fn foo<'a>(x: &'a i32) -> &'a i32`)
+2. If there are multiple input lifetime parameters, but one of them is `&self` or `&mut self`, 
+   the lifetime of `self` is assigned to all output lifetime parameters.
+
+##### Static lifetime
+The `'static` lifetime means that the reference "can" live for the entire duration of the program. 
+All string literals have the `'static` lifetime. `let s: &'static str = "This is a string literal";`
+
+### Putting everything together
+```rust
+fn longest_with_notify<'a, T> {
+    x: &'a str,
+    y: &'a str,
+    ann: T,
+) -> &'a str
+where
+    T: Display,
+{
+    println!("Notification: {}", ann);
+    if x.len() > y.len() {
+        x
+     } else {
+        y
+     }
+}
+```
 
