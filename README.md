@@ -484,3 +484,89 @@ where
 }
 ```
 
+## Testing
+
+Using the command `cargo test`
+
+```rust
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        assert_eq!(2 + 2, 4);
+    }
+
+    #[test]
+    fn another_test() {
+        panic!("This test will fail");
+    }
+}
+```
+Important commands and marcros
+```shell
+cargo test
+cargo test -- --help
+cargo test -- --test-threads=1 // tells the compiler to not use prallelism
+cargo test -- --show-output // shows println! statements main during testing
+cargo test <function name> // tests a specific fn
+cargo test <fn contaits> // ex: fn add_two fn add_three will both be run by cargo test add
+cargo test -- --ignored // run the tested ignored with wth #[ignore] annotation
+cargo test --test <file name> // rn the specified file for integration tests
+
+assert!( bool )
+assert_eq!( , )
+assert_ne!( , )
+
+```
+
+Usually `#[derive(PartialEq, Debug)]` annotation is enough for your struct/enum.
+
+Adding custom error message with assert:
+```rust
+let to_test = String::from("hello");
+assert!(to_test.contains("world"),
+        "Test did not contain world, value was {}",
+         to_test)
+```
+
+Should panic
+```rust
+#[test]
+#[should_panic]
+fn test_panic() {
+   some_function_that_will_panic();
+}
+```
+More precisely, if we want to test that the specific panic happened that we expect.
+```rust
+#[test]
+#[should_panic(expected = "Invalid argument")
+....
+
+```
+In stead of assert, we can return Result for testing.
+
+```rust
+#[test]
+fn it_works() -> Result<(), String> {
+    if 2 + 2 = 4 {
+        Ok(())
+    } else {
+        Err(String::from("two plus two does not equal four"))
+    }
+}
+```
+Conventions
+
+### Unit Tests
+
+Put unit tests in the src directory in each file with the code that they're testing. The convention is to create a module named tests in each file
+to contain the test functions and to annotate the module with `cfg(test)`.
+
+Note that because of this structure you can also test private functions
+
+### Integration Tests
+In Rust, integration tests are entirely external to your library. We use a `tests/` at the top level next to `src/`.
+To use shared code use a `/mod.rs` file. This will tell rust that this file is not for testing in the tests/ folder.
+
+
