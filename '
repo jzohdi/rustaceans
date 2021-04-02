@@ -861,29 +861,4 @@ fn main() {
 ```
 `Cell<T>` offers similar flexibility but internally uses `Mutex<T>` in order to provide safety.
 
-### Reference Cycles
-It is possible that a cyclic data structure could case memory leaks. This is because if
-every item in the structure is refered to by something else, it will never be dropped.
-
-Instead use `Weak<T>` which does not garauntee the reference is still held.
-```rust
-fn main() {
-    let leaf = Rc::new(Node {
-        value: 3,
-        parent: RefCell::new(Weak::new()),
-        children: RefCell::new(vec![]),
-    });
-
-    println!("leaf parent = {:?}", leaf.parent.borrow().upgrade()); // returns an Option
-
-    let root = Rc::new(Node {
-        value: 5,
-        parent: RefCell::new(Weak::new()),
-        children: RefCell:new(vec![Rc::clone(&leaf)),
-    });
-
-    *leaf.parent.borrow_mut() = Rc::downgrade(&branch); // returns a smart pointer of type Weak<Node>
-
-    println!("leaf parent = {:?}", leaf.parent.borrow().upgrade()); 
-```
 
