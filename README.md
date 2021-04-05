@@ -887,3 +887,13 @@ fn main() {
     println!("leaf parent = {:?}", leaf.parent.borrow().upgrade()); 
 ```
 
+## Chapter 16
+Concurrency
+
+Covered methods
+1. creating multiple threads
+2. Mesasge-passing concurrency
+3. Shared-state concurrency
+4. `Sync` and `Send` traits for user-defined types
+
+
