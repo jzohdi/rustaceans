@@ -896,4 +896,72 @@ Covered methods
 3. Shared-state concurrency
 4. `Sync` and `Send` traits for user-defined types
 
+## Chapter 18
+Pattern Matching
+
+### Literals
+```rust
+    let x = 1;
+     
+    match x {
+        1 => println!("one"),
+        2 => println!("two"),
+        3 => println!("three"),
+        _ => println!("anything"),
+    }
+```
+
+Matching named variables
+```rust
+let x = Some(5);
+let y = 10;
+
+match x {
+    Some(50) => println!("Got 50"),
+    Some(y) => println!("Matched, y = {:?}", y),
+    _ => println!("Default case, x = {:?}", x),
+}
+
+println!("at the end: x = {:?}, y = {:?}", x, y)l;
+```
+Output
+```shell
+> Matched, y = 5
+  at the end: x = Some(5), y = 10
+```
+
+### Matching Ranges of values with ..= and using |
+```rust
+let x = 1;
+
+match x {
+    1 | 2 => println!("one or two"),
+    3 => println!("three"),
+    _ => println!("anything else"),
+}
+
+let x = 5;
+
+match x {
+    1..=5 => println!("one through five"),
+    _ => prinln!("something else"),
+}
+
+let x = 'c';
+
+match { 
+    'a'..='j' => println!("early ASCII letter"),
+    'k'..='z' => println!("late ASCII letter"),
+     _ => println!("something else"),
+}
+```
+Output
+```shell
+> one or two
+  one through five
+  early ASCII letter
+```
+
+
+
 
