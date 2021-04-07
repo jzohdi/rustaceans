@@ -962,6 +962,28 @@ Output
   early ASCII letter
 ```
 
+### Destructuring
 
+```rust
+let p = Point { x: 0, y: 7 };
+
+let Point { x: a, y: b } = p;
+
+assert_eq!(0, a);
+assert_eq!(7, b);
+
+// or shorthand
+
+let Point { x, y } = p;
+
+assert_eq!(0, x);
+assert_eq!(7, y);
+
+match p {
+    Point { x, y: 8 } => println!("this will not match"),
+    Point { x: 0, y} => println!("x is 0, y = {}", y),
+    Point { x, y } => println!("x is not 0 and y is not 8"),
+}
+```
 
 
